@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Forzar visualmente mayúsculas en todos los inputs de texto */
+    input[type="text"], textarea, input[type="date"], input[type="email"], select { text-transform: uppercase; }
+    /* Ocultar flechas en inputs numéricos */
+    input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    /* Clase para ocultar pasos del wizard */
+    .hidden-step { display: none; }
+    /* Animación suave al cambiar de paso */
+    .fade-in { animation: fadeIn 0.4s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    
+    /* Estilo para inputs de archivo */
+    .file-upload-wrapper { border: 2px dashed #1e3a8a; padding: 20px; text-align: center; border-radius: 8px; background-color: #eff6ff; cursor: pointer; transition: background 0.3s; }
+    .file-upload-wrapper:hover { background-color: #dbeafe; }
+  </style>
+</head>
+<body class="bg-gray-100 py-8 px-4 font-sans text-gray-800">
+
+  <div class="max-w-5xl mx-auto bg-white p-8 rounded-lg shadow-xl border-t-8 border-blue-900">
+    <h1 class="text-3xl font-bold text-center mb-2 text-blue-900">FORMULARIO DE TRÁMITE DE VISA</h1>
+    
+    <div class="flex flex-wrap justify-center mb-8 text-xs font-bold tracking-widest text-gray-400 border-b pb-4">
+      <span class="mx-2 text-blue-800"></span>
+    </div>
+
+    <form id="visaForm" onsubmit="submitForm(event)" autocomplete="off">
+      
+      <div id="step1" class="fade-in">
+        <div class="mb-8">
+          <h3 class="text-sm font-bold text-white bg-blue-900 p-2 mb-4 uppercase rounded shadow">Datos Generales</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="col-span-2 md:col-span-1">
+              <label class="block text-xs font-bold text-gray-600 mb-1">APELLIDOS (PATERNO Y MATERNO)</label>
+              <input type="text" name="apellidos" class="w-full p-2 border border-gray-300 rounded focus:border-blue-500 uppercase" required>
+            </div>
+            <div class="col-span-2 md:col-span-1">
+              <label class="block text-xs font-bold text-gray-600 mb-1">NOMBRE(S)</label>
+              <input type="text" name="nombres" class="w-full p-2 border border-gray-300 rounded focus:border-blue-500 uppercase" required>
+            </div>
+            <div><label class="block text-xs font-bold text-gray-600 mb-1">NOMBRE ALFABETO NATIVO</label><input type="text" name="nombreNativo" class="w-full p-2 border rounded uppercase" placeholder="SOLO SI APLICA"></div>
+            <div><label class="block text-xs font-bold text-gray-600 mb-1">OTROS NOMBRES USADOS</label><input type="text" name="otrosNombres" class="w-full p-2 border rounded uppercase" placeholder="EJ. DE CASADA"></div>
+            
+            <div class="grid grid-cols-2 gap-4">
+              <div><label class="block text-xs font-bold text-gray-600 mb-1">GÉNERO</label>
+                <select name="genero" class="w-full p-2 border rounded uppercase text-sm bg-white"><option value="MASCULINO">MASCULINO</option><option value="FEMENINO">FEMENINO</option></select>
+              </div>
+              <div><label class="block text-xs font-bold text-gray-600 mb-1">ESTADO CIVIL</label>
+                <select name="estadoCivil" class="w-full p-2 border rounded uppercase text-sm bg-white"><option value="SOLTERO">SOLTERO(A)</option><option value="CASADO">CASADO(A)</option><option value="DIVORCIADO">DIVORCIADO(A)</option><option value="VIUDO">VIUDO(A)</option><option value="SEPARADO">SEPARADO(A)</option></select>
+              </div>
+            </div>
+
+            <div><label class="block text-xs font-bold text-gray-600 mb-1">FECHA DE NACIMIENTO</label><input type="date" name="fechaNacimiento" class="w-full p-2 border rounded uppercase" required></div>
+            
+            <div class="col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
+               <div><label class="block text-xs font-bold text-gray-600 mb-1">CIUDAD DE NACIMIENTO</label><input type="text" name="ciudadNac" class="w-full p-2 border rounded uppercase" required></div>
+               <div><label class="block text-xs font-bold text-gray-600 mb-1">ESTADO DE NACIMIENTO</label><input type="text" name="estadoNac" class="w-full p-2 border rounded uppercase" required></div>
+               <div><label class="block text-xs font-bold text-gray-600 mb-1">PAÍS DE NACIMIENTO</label><input type="text" name="paisNac" class="w-full p-2 border rounded uppercase" required></div>
+            </div>
+
+            <div><label class="block text-xs font-bold text-gray-600 mb-1">NACIONALIDAD</label><input type="text" name="nacionalidad" class="w-full p-2 border rounded uppercase" required></div>
+            <div><label class="block text-xs font-bold text-gray-600 mb-1"> OTRA NACIONALIDAD</label><input type="text" name="otraNacionalidad" class="w-full p-2 border rounded uppercase"></div>
+            <div class="col-span-2"><label class="block text-xs font-bold text-gray-600 mb-1">13. CLAVE ELECTOR (INE)</label><input type="text" name="ine" class="w-full p-2 border rounded uppercase"></div>
+            <div><label class="block text-xs font-bold text-gray-600 mb-1">1SSN (USA)</label><input type="text" name="ssn" class="w-full p-2 border rounded uppercase"></div>
+            <div><label class="block text-xs font-bold text-gray-600 mb-1"> TAX ID (USA)</label><input type="text" name="taxId" class="w-full p-2 border rounded uppercase"></div>
+          </div>
+        </div>
+
+        <div class="mb-8">
+          <h3 class="text-sm font-bold text-white bg-blue-900 p-2 mb-4 uppercase rounded shadow"> Domicilio Actual</h3>
+          <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+            <div class="md:col-span-4"><label class="block text-xs font-bold text-gray-600 mb-1">CALLE Y NÚMERO</label><input type="text" name="calle" class="w-full p-2 border rounded uppercase" required></div>
+            <div class="md:col-span-2"><label class="block text-xs font-bold text-gray-600 mb-1"> COLONIA</label><input type="text" name="colonia" class="w-full p-2 border rounded uppercase" required></div>
+            <div class="md:col-span-2"><label class="block text-xs font-bold text-gray-600 mb-1">CIUDAD</label><input type="text" name="ciudadDom" class="w-full p-2 border rounded uppercase" required></div>
+            <div class="md:col-span-2"><label class="block text-xs font-bold text-gray-600 mb-1"> ESTADO</label><input type="text" name="estadoDom" class="w-full p-2 border rounded uppercase" required></div>
+            <div class="md:col-span-2"><label class="block text-xs font-bold text-gray-600 mb-1">CP</label><input type="number" name="cp" class="w-full p-2 border rounded" required></div>
+          </div>
+        </div>
+
+        <div class="mb-8">
+          <h3 class="text-sm font-bold text-white bg-blue-900 p-2 mb-4 uppercase rounded shadow">Información de Contacto</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+             <div><label class="block text-xs font-bold text-gray-600 mb-1">TELÉFONO DE CASA</label>
+               <div class="flex gap-2"><input type="number" name="ladaCasa" placeholder="LADA (2)" class="w-1/3 p-2 border rounded text-center" oninput="limitLength(this, 2)"><input type="number" name="telCasa" placeholder="NÚMERO (10)" class="w-2/3 p-2 border rounded" oninput="limitLength(this, 10)"></div>
+             </div>
+             <div><label class="block text-xs font-bold text-gray-600 mb-1"> TELÉFONO DE TRABAJO</label>
+               <div class="flex gap-2"><input type="number" name="ladaTrabajo" placeholder="LADA (2)" class="w-1/3 p-2 border rounded text-center" oninput="limitLength(this, 2)"><input type="number" name="telTrabajo" placeholder="NÚMERO (10)" class="w-2/3 p-2 border rounded" oninput="limitLength(this, 10)"></div>
+             </div>
+             <div><label class="block text-xs font-bold text-gray-600 mb-1">FAX DE TRABAJO</label>
+               <div class="flex gap-2"><input type="number" name="ladaFax" placeholder="LADA (2)" class="w-1/3 p-2 border rounded text-center" oninput="limitLength(this, 2)"><input type="number" name="fax" placeholder="NÚMERO (10)" class="w-2/3 p-2 border rounded" oninput="limitLength(this, 10)"></div>
+             </div>
+             <div><label class="block text-xs font-bold text-gray-600 mb-1">CELULAR *</label>
+               <div class="flex gap-2"><input type="number" name="ladaCelular" placeholder="LADA (2)" class="w-1/3 p-2 border rounded text-center" oninput="limitLength(this, 2)" required><input type="number" name="celular" placeholder="NÚMERO (10)" class="w-2/3 p-2 border rounded" oninput="limitLength(this, 10)" required></div>
+             </div>
+          </div>
+          <div class="mt-4"><label class="block text-xs font-bold text-gray-600 mb-1">CORREO ELECTRÓNICO</label><input type="email" name="email" class="w-full p-2 border rounded uppercase" required></div>
+        </div>
+
+        <div class="mb-8 bg-gray-50 p-4 rounded border border-gray-200">
+          <label class="block text-sm font-bold text-blue-900 mb-3 uppercase">27. ¿Tiene usted redes sociales?</label>
+          <div class="flex gap-6 mb-4">
+            <label class="flex items-center cursor-pointer"><input type="radio" name="tieneRedes" value="SI" class="mr-2" onchange="toggleSocials(true)"><span class="font-bold">SÍ</span></label>
+            <label class="flex items-center cursor-pointer"><input type="radio" name="tieneRedes" value="NO" class="mr-2" onchange="toggleSocials(false)" checked><span class="font-bold">NO</span></label>
+          </div>
+          <div id="socialMediaBlock" class="hidden pl-4 border-l-4 border-blue-400">
+            <p class="text-xs text-gray-500 mb-4 uppercase font-semibold">MENCIONE LA RED SOCIAL Y COMO APARECE:</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div><label class="block text-xs font-bold text-gray-600">FACEBOOK</label><input type="text" name="facebook" class="w-full p-2 border rounded uppercase"></div>
+              <div><label class="block text-xs font-bold text-gray-600">INSTAGRAM</label><input type="text" name="instagram" class="w-full p-2 border rounded uppercase"></div>
+              <div><label class="block text-xs font-bold text-gray-600">TWITTER / X</label><input type="text" name="twitter" class="w-full p-2 border rounded uppercase"></div>
+              <div><label class="block text-xs font-bold text-gray-600">LINKEDIN</label><input type="text" name="linkedin" class="w-full p-2 border rounded uppercase"></div>
+            </div>
+          </div>
+        </div>
+
+        <button type="button" onclick="goToStep(2)" class="w-full bg-blue-700 text-white font-bold py-4 rounded shadow hover:bg-blue-800 transition uppercase tracking-widest text-lg">Siguiente Sección ></button>
+      </div>
+
+      <div id="step2" class="hidden-step fade-in">
+        <div class="mb-10">
+          <h3 class="text-sm font-bold text-white bg-blue-900 p-2 mb-4 uppercase rounded shadow">Datos del Pasaporte</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="col-span-2 md:col-span-1"><label class="block text-xs font-bold text-gray-600 mb-1"> NÚMERO DE PASAPORTE</label><input type="text" name="pasaporteNum" class="w-full p-2 border border-gray-300 rounded uppercase" required></div>
+            <div class="col-span-2 md:col-span-1"><label class="block text-xs font-bold text-gray-600 mb-1"> PAÍS QUE LO EXPIDE</label><input type="text" name="pasaportePais" class="w-full p-2 border border-gray-300 rounded uppercase" required></div>
+            <div><label class="block text-xs font-bold text-gray-600 mb-1">CIUDAD DE EXPEDICIÓN</label><input type="text" name="pasaporteCiudad" class="w-full p-2 border border-gray-300 rounded uppercase" required></div>
+            <div><label class="block text-xs font-bold text-gray-600 mb-1">ESTADO DE EXPEDICIÓN</label><input type="text" name="pasaporteEstado" class="w-full p-2 border border-gray-300 rounded uppercase" required></div>
+            <div><label class="block text-xs font-bold text-gray-600 mb-1"> FECHA DE EXPEDICIÓN</label><input type="date" name="pasaporteFechaExp" class="w-full p-2 border border-gray-300 rounded uppercase" required></div>
+            <div><label class="block text-xs font-bold text-gray-600 mb-1">FECHA DE CADUCIDAD</label><input type="date" name="pasaporteFechaCad" class="w-full p-2 border border-gray-300 rounded uppercase" required></div>
+          </div>
+        </div>
+
+        <div class="mb-10 bg-red-50 p-4 rounded border border-red-200">
+          <label class="block text-sm font-bold text-red-900 mb-3 uppercase"> ¿Ha perdido o le han robado un pasaporte?</label>
+          <div class="flex gap-6 mb-4">
+            <label class="flex items-center cursor-pointer"><input type="radio" name="roboPasaporte" value="SI" class="mr-2 text-red-600" onchange="toggleLostPassport(true)"><span class="font-bold text-red-900">SÍ</span></label>
+            <label class="flex items-center cursor-pointer"><input type="radio" name="roboPasaporte" value="NO" class="mr-2 text-red-600" onchange="toggleLostPassport(false)" checked><span class="font-bold text-red-900">NO</span></label>
+          </div>
+          <div id="lostPassportBlock" class="hidden pl-4 border-l-4 border-red-400">
+            <p class="text-xs text-red-800 mb-2 uppercase font-semibold">EN CASO AFIRMATIVO PROPORCIONE LA FECHA Y EXPLIQUE LOS HECHOS:</p>
+            <textarea name="detalleRobo" rows="4" class="w-full p-2 border border-red-300 rounded uppercase placeholder-red-200" placeholder="EJEMPLO: 10-ENE-2020. ME ROBARON LA MOCHILA..."></textarea>
+          </div>
+        </div>
+
+        <div class="flex gap-4">
+          <button type="button" onclick="goToStep(1)" class="w-1/3 bg-gray-500 text-white font-bold py-4 rounded shadow hover:bg-gray-600 uppercase">< Atrás</button>
+          <button type="button" onclick="goToStep(3)" class="w-2/3 bg-blue-700 text-white font-bold py-4 rounded shadow hover:bg-blue-800 uppercase">Siguiente Sección ></button>
+        </div>
+      </div>
+
+      <div id="step3" class="hidden-step fade-in">
+        <div class="mb-10">
+          <h3 class="text-sm font-bold text-white bg-blue-900 p-2 mb-4 uppercase rounded shadow">Detalles del Viaje</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+             <div class="col-span-2">
+              <label class="block text-xs font-bold text-gray-600 mb-1">TIPO DE VISA QUE SOLICITA</label>
+              <select name="tipoVisa" class="w-full p-2 border border-gray-300 rounded uppercase text-sm" required>
+                <option value="TURISTA (B1/B2)">TURISTA / NEGOCIOS (B1/B2)</option>
+                <option value="ESTUDIANTE">ESTUDIANTE</option>
+                <option value="TRABAJO">TRABAJO</option>
+                <option value="TLC">TLC (NAFTA)</option>
+                <option value="OTRO">OTRO</option>
+              </select>
+            </div>
+            <div><label class="block text-xs font-bold text-gray-600 mb-1">FECHA PREVISTA DE VIAJE</label><input type="date" name="fechaViaje" class="w-full p-2 border border-gray-300 rounded uppercase" required></div>
+            <div>
+              <label class="block text-xs font-bold text-gray-600 mb-1"> TIEMPO DE ESTADÍA</label>
+              <div class="flex gap-2">
+                <input type="number" name="tiempoEstadia" class="w-1/2 p-2 border border-gray-300 rounded" placeholder="#" required>
+                <select name="unidadEstadia" class="w-1/2 p-2 border border-gray-300 rounded uppercase text-sm"><option value="DIAS">DÍAS</option><option value="SEMANAS">SEMANAS</option><option value="MESES">MESES</option></select>
+              </div>
+            </div>
+            <div class="col-span-2">
+              <label class="block text-xs font-bold text-gray-600 mb-1"> DIRECCIÓN EN ESTADOS UNIDOS</label>
+              <input type="text" name="calleUsa" placeholder="NÚMERO Y CALLE" class="w-full p-2 border border-gray-300 rounded uppercase mb-2" required>
+              <div class="grid grid-cols-3 gap-2">
+                <input type="text" name="ciudadUsa" placeholder="CIUDAD" class="w-full p-2 border border-gray-300 rounded uppercase" required>
+                <input type="text" name="estadoUsa" placeholder="ESTADO" class="w-full p-2 border border-gray-300 rounded uppercase" required>
+                <input type="text" name="zipUsa" placeholder="ZIP CODE" class="w-full p-2 border border-gray-300 rounded uppercase" required>
+              </div>
+            </div>
+            <div class="col-span-2 border-t pt-4">
+               <label class="block text-xs font-bold text-gray-600 mb-1">¿QUIÉN PAGA EL VIAJE?</label>
+               <select name="quienPaga" class="w-full p-2 border rounded uppercase text-sm bg-gray-50 mb-2" onchange="togglePayer(this.value)">
+                 <option value="YO MISMO">YO MISMO</option>
+                 <option value="OTRA PERSONA">OTRA PERSONA</option>
+                 <option value="COMPAÑIA">COMPAÑÍA / ORGANIZACIÓN</option>
+               </select>
+               <div id="payerDetails" class="hidden"><input type="text" name="detallePagador" placeholder="NOMBRE DE LA PERSONA O COMPAÑÍA" class="w-full p-2 border border-gray-300 rounded uppercase"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-10">
+          <h3 class="text-sm font-bold text-white bg-blue-900 p-2 mb-4 uppercase rounded shadow">Acompañantes</h3>
+          <div class="mb-4 border-b pb-4">
+            <label class="block text-xs font-bold text-gray-600 mb-1"> ¿VIAJA COMO PARTE DE UN GRUPO U ORGANIZACIÓN?</label>
+            <div class="flex gap-4 mb-2">
+               <label><input type="radio" name="viajaGrupo" value="SI" onclick="document.getElementById('grupoDiv').classList.remove('hidden')"> SÍ</label>
+               <label><input type="radio" name="viajaGrupo" value="NO" onclick="document.getElementById('grupoDiv').classList.add('hidden')" checked> NO</label>
+            </div>
+            <div id="grupoDiv" class="hidden"><input type="text" name="nombreGrupo" placeholder="NOMBRE DEL GRUPO" class="w-full p-2 border rounded uppercase"></div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-600 mb-1">¿VIAJA CON OTRAS PERSONAS (NO GRUPO)?</label>
+            <div class="flex gap-4 mb-2">
+               <label><input type="radio" name="viajaAcompanado" value="SI" onclick="document.getElementById('companionsDiv').classList.remove('hidden')"> SÍ</label>
+               <label><input type="radio" name="viajaAcompanado" value="NO" onclick="document.getElementById('companionsDiv').classList.add('hidden')" checked> NO</label>
+            </div>
+            <div id="companionsDiv" class="hidden p-4 bg-gray-50 border rounded">
+              <div id="companionsContainer"></div>
+              <button type="button" onclick="addCompanion()" class="mt-2 text-xs bg-green-600 text-white px-3 py-1 rounded">+ AGREGAR ACOMPAÑANTE</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-4">
+          <button type="button" onclick="goToStep(2)" class="w-1/3 bg-gray-500 text-white font-bold py-4 rounded shadow hover:bg-gray-600 uppercase">< Atrás</button>
+          <button type="button" onclick="goToStep(4)" class="w-2/3 bg-blue-700 text-white font-bold py-4 rounded shadow hover:bg-blue-800 uppercase">Siguiente Sección ></button>
+        </div>
+      </div>
+
+      <div id="step4" class="hidden-step fade-in">
+         <div class="mb-10">
+          <h3 class="text-sm font-bold text-white bg-blue-900 p-2 mb-4 uppercase rounded shadow">Historial de Viajes a USA</h3>
+          
+          <div class="mb-6 border-l-4 border-blue-500 pl-4">
+             <label class="block text-xs font-bold text-gray-600 mb-1"> ¿HA ESTADO ANTERIORMENTE EN ESTADOS UNIDOS?</label>
+             <div class="flex gap-4 mb-2">
+               <label><input type="radio" name="haEstadoUsa" value="SI" onchange="toggleUsaHistory(true)"> SÍ</label>
+               <label><input type="radio" name="haEstadoUsa" value="NO" onchange="toggleUsaHistory(false)" checked> NO</label>
+             </div>
+             <div id="usaHistoryDiv" class="hidden">
+                <p class="text-xs font-bold text-blue-800 mt-2">ÚLTIMO VIAJE:</p>
+                <div class="grid grid-cols-2 gap-4 mb-2">
+                  <input type="date" name="fechaUltimoViaje" class="border p-2 rounded w-full">
+                  <div class="flex gap-1">
+                     <input type="number" name="estadiaUltimoViaje" placeholder="#" class="border p-2 rounded w-1/2">
+                     <select name="unidadUltimoViaje" class="border p-2 rounded w-1/2 text-xs"><option value="DIAS">DÍAS</option><option value="SEMANAS">SEMANAS</option></select>
+                  </div>
+                </div>
+                <label class="block text-xs font-bold text-gray-600 mb-1">¿HA TENIDO LICENCIA DE CONDUCIR DE USA?</label>
+                <div class="flex gap-4 mb-2">
+                   <label><input type="radio" name="licenciaUsa" value="SI" onclick="document.getElementById('licenciaDiv').classList.remove('hidden')"> SÍ</label>
+                   <label><input type="radio" name="licenciaUsa" value="NO" onclick="document.getElementById('licenciaDiv').classList.add('hidden')" checked> NO</label>
+                </div>
+                <div id="licenciaDiv" class="hidden mb-2"><input type="text" name="numLicencia" placeholder="NUM LICENCIA Y ESTADO" class="w-full p-2 border rounded uppercase"></div>
+             </div>
+          </div>
+
+          <div class="mb-6 border-l-4 border-blue-500 pl-4">
+             <label class="block text-xs font-bold text-gray-600 mb-1">¿HA TRAMITADO UNA VISA ANTERIORMENTE?</label>
+             <div class="flex gap-4 mb-2">
+               <label><input type="radio" name="visaAnterior" value="SI" onchange="toggleVisaHistory(true)"> SÍ</label>
+               <label><input type="radio" name="visaAnterior" value="NO" onchange="toggleVisaHistory(false)" checked> NO</label>
+             </div>
+             <div id="visaHistoryDiv" class="hidden bg-gray-50 p-2 rounded">
+                <div class="grid grid-cols-2 gap-2 mb-2">
+                   <input type="date" name="fechaVisaAnt" class="border p-2 rounded w-full" title="Fecha Emisión">
+                   <input type="text" name="numVisaAnt" placeholder="NÚMERO VISA" class="border p-2 rounded w-full uppercase">
+                </div>
+                <div class="mb-2">
+                   <label class="text-xs">¿ESTA TRAMITANDO EL MISMO TIPO DE VISA?</label><br>
+                   <label class="mr-2"><input type="radio" name="mismoTipoVisa" value="SI"> SÍ</label>
+                   <label><input type="radio" name="mismoTipoVisa" value="NO"> NO</label>
+                </div>
+                <div class="mb-2">
+                   <label class="text-xs">¿ESTA TRAMITANDO EN EL MISMO PAÍS?</label><br>
+                   <label class="mr-2"><input type="radio" name="mismoPaisVisa" value="SI"> SÍ</label>
+                   <label><input type="radio" name="mismoPaisVisa" value="NO"> NO</label>
+                </div>
+                <div class="mb-2">
+                   <label class="text-xs">¿LE HAN TOMADO HUELLAS DACTILARES (10 DEDOS)?</label><br>
+                   <label class="mr-2"><input type="radio" name="huellas" value="SI"> SÍ</label>
+                   <label><input type="radio" name="huellas" value="NO"> NO</label>
+                </div>
+                <div class="mb-2 border-t pt-2">
+                   <label class="text-xs text-red-700 font-bold">¿VISA PERDIDA O ROBADA?</label><br>
+                   <label class="mr-2"><input type="radio" name="visaPerdida" value="SI" onclick="document.getElementById('visaPerdidaDiv').classList.remove('hidden')"> SÍ</label>
+                   <label><input type="radio" name="visaPerdida" value="NO" onclick="document.getElementById('visaPerdidaDiv').classList.add('hidden')" checked> NO</label>
+                   <div id="visaPerdidaDiv" class="hidden"><input type="text" name="anioVisaPerdida" placeholder="AÑO DE PERDIDA" class="w-full border p-1 rounded"></div>
+                </div>
+                <div class="mb-2 border-t pt-2">
+                   <label class="text-xs text-red-700 font-bold">¿VISA CANCELADA O REVOCADA?</label><br>
+                   <label class="mr-2"><input type="radio" name="visaCancelada" value="SI" onclick="document.getElementById('visaCancelDiv').classList.remove('hidden')"> SÍ</label>
+                   <label><input type="radio" name="visaCancelada" value="NO" onclick="document.getElementById('visaCancelDiv').classList.add('hidden')" checked> NO</label>
+                   <div id="visaCancelDiv" class="hidden"><textarea name="motivoCancelacion" class="w-full border p-1 rounded uppercase" placeholder="EXPLICACIÓN"></textarea></div>
+                </div>
+             </div>
+          </div>
+
+          <div class="mb-6 border-l-4 border-red-500 pl-4 bg-red-50 p-2">
+             <label class="block text-xs font-bold text-red-800 mb-1">¿LE HAN NEGADO LA ENTRADA O DEPORTADO?</label>
+             <div class="flex gap-4 mb-2">
+               <label><input type="radio" name="negacionEntrada" value="SI" onclick="document.getElementById('negacionDiv').classList.remove('hidden')"> SÍ</label>
+               <label><input type="radio" name="negacionEntrada" value="NO" onclick="document.getElementById('negacionDiv').classList.add('hidden')" checked> NO</label>
+             </div>
+             <div id="negacionDiv" class="hidden"><textarea name="motivoNegacion" class="w-full border border-red-300 p-2 rounded uppercase" placeholder="EXPLIQUE DETALLADAMENTE"></textarea></div>
+          </div>
+        </div>
+
+        <div class="flex gap-4">
+          <button type="button" onclick="goToStep(3)" class="w-1/3 bg-gray-500 text-white font-bold py-4 rounded shadow hover:bg-gray-600 uppercase">< Atrás</button>
+          <button type="button" onclick="goToStep(5)" class="w-2/3 bg-blue-700 text-white font-bold py-4 rounded shadow hover:bg-blue-800 uppercase">Siguiente Sección ></button>
+        </div>
+      </div>
+
+      <div id="step5" class="hidden-step fade-in">
+        <div class="mb-8">
+          <h3 class="text-sm font-bold text-white bg-blue-900 p-2 mb-4 uppercase rounded shadow">Contacto en Estados Unidos</h3>
+          
+          <label class="block text-xs font-bold text-gray-600 mb-1">¿TIENE ALGÚN FAMILIAR O AMIGO EN ESTADOS UNIDOS?</label>
+          <div class="flex gap-6 mb-4">
+            <label class="flex items-center cursor-pointer"><input type="radio" name="tieneFamiliarUSA" value="SI" class="mr-2" onchange="toggleDiv('divFamiliarUSA', true); toggleDiv('divCompaniaUSA', false)"> SÍ</label>
+            <label class="flex items-center cursor-pointer"><input type="radio" name="tieneFamiliarUSA" value="NO" class="mr-2" onchange="toggleDiv('divFamiliarUSA', false); toggleDiv('divCompaniaUSA', true)"> NO (ES COMPAÑÍA/OTRO)</label>
+          </div>
+
+          <div id="divFamiliarUSA" class="hidden bg-gray-50 p-4 rounded border border-gray-200">
+            <p class="text-xs text-blue-800 mb-2 uppercase font-semibold">DATOS DE LA PERSONA DE CONTACTO:</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div><label class="block text-xs font-bold text-gray-600">APELLIDOS</label><input type="text" name="contUsApellido" class="w-full p-2 border rounded uppercase"></div>
+              <div><label class="block text-xs font-bold text-gray-600">NOMBRES</label><input type="text" name="contUsNombre" class="w-full p-2 border rounded uppercase"></div>
+              <div><label class="block text-xs font-bold text-gray-600">RELACIÓN CON USTED</label><input type="text" name="contUsRelacion" class="w-full p-2 border rounded uppercase"></div>
+              <div><label class="block text-xs font-bold text-gray-600">TELÉFONO</label><input type="text" name="contUsTel" class="w-full p-2 border rounded uppercase"></div>
+              <div><label class="block text-xs font-bold text-gray-600">EMAIL</label><input type="email" name="contUsEmail" class="w-full p-2 border rounded uppercase"></div>
+              <div class="md:col-span-2"><label class="block text-xs font-bold text-gray-600">DOMICILIO (CALLE Y #)</label><input type="text" name="contUsCalle" class="w-full p-2 border rounded uppercase"></div>
+              <div><label class="block text-xs font-bold text-gray-600">CIUDAD</label><input type="text" name="contUsCiudad" class="w-full p-2 border rounded uppercase"></div>
+              <div><label class="block text-xs font-bold text-gray-600">ESTADO</label><input type="text" name="contUsEstado" class="w-full p-2 border rounded uppercase"></div>
+              <div><label class="block text-xs font-bold text-gray-600">ZIP CODE</label><input type="text" name="contUsZip" class="w-full p-2 border rounded uppercase"></div>
+            </div>
+          </div>
+
+          <div id="divCompaniaUSA" class="hidden bg-gray-50 p-4 rounded border border-gray-200">
+            <p class="text-xs text-blue-800 mb-2 uppercase font-semibold">DATOS DE COMPAÑÍA / ORGANIZACIÓN:</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="md:col-span-2"><label class="block text-xs font-bold text-gray-600">NOMBRE COMPAÑÍA</label><input type="text" name="compNombre" class="w-full p-2 border rounded uppercase"></div>
+              <div class="md:col-span-2"><label class="block text-xs font-bold text-gray-600">DOMICILIO</label><input type="text" name="compCalle" class="w-full p-2 border rounded uppercase"></div>
+              <div><label class="block text-xs font-bold text-gray-600">CIUDAD</label><input type="text" name="compCiudad" class="w-full p-2 border rounded uppercase"></div>
+              <div><label class="block text-xs font-bold text-gray-600">ESTADO</label><input type="text" name="compEstado" class="w-full p-2 border rounded uppercase"></div>
+              <div><label class="block text-xs font-bold text-gray-600">ZIP CODE</label><input type="text" name="compZip" class="w-full p-2 border rounded uppercase"></div>
+              <div><label class="block text-xs font-bold text-gray-600">TELÉFONO</label><input type="text" name="compTel" class="w-full p-2 border rounded uppercase"></div>
+              <div><label class="block text-xs font-bold text-gray-600">EMAIL</label><input type="email" name="compEmail" class="w-full p-2 border rounded uppercase"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="flex gap-4">
+          <button type="button" onclick="goToStep(4)" class="w-1/3 bg-gray-500 text-white font-bold py-4 rounded shadow hover:bg-gray-600 uppercase">< Atrás</button>
+          <button type="button" onclick="goToStep(6)" class="w-2/3 bg-blue-700 text-white font-bold py-4 rounded shadow hover:bg-blue-800 uppercase">Siguiente Sección ></button>
+        </div>
+      </div>
+
+      <div id="step6" class="hidden-step fade-in">
+        <div class="mb-8">
+          <h3 class="text-sm font-bold text-white bg-blue-900 p-2 mb-4 uppercase rounded shadow">Información Familiar</h3>
+          
+          <div class="mb-6 p-4 border border-gray-200 rounded">
+            <h4 class="font-bold text-blue-800 text-sm mb-2">DATOS DEL PADRE</h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <input type="text" name="padreApellidos" placeholder="APELLIDOS" class="w-full p-2 border rounded uppercase">
+              <input type="text" name="padreNombre" placeholder="NOMBRES" class="w-full p-2 border rounded uppercase">
+              <input type="date" name="padreNac" class="w-full p-2 border rounded uppercase">
+            </div>
+            <div class="mt-2">
+              <label class="block text-xs font-bold text-gray-600">¿ESTÁ SU PADRE EN USA?</label>
+              <select name="padreEnUsa" class="w-full p-2 border rounded uppercase text-sm" onchange="toggleDiv('divPadreStatus', this.value === 'SI')">
+                <option value="NO">NO</option><option value="SI">SI</option>
+              </select>
+            </div>
+            <div id="divPadreStatus" class="hidden mt-2"><input type="text" name="padreStatus" placeholder="ESTATUS MIGRATORIO" class="w-full p-2 border rounded uppercase"></div>
+          </div>
+
+          <div class="mb-6 p-4 border border-gray-200 rounded">
+            <h4 class="font-bold text-blue-800 text-sm mb-2">DATOS DE LA MADRE</h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <input type="text" name="madreApellidos" placeholder="APELLIDOS" class="w-full p-2 border rounded uppercase">
+              <input type="text" name="madreNombre" placeholder="NOMBRES" class="w-full p-2 border rounded uppercase">
+              <input type="date" name="madreNac" class="w-full p-2 border rounded uppercase">
+            </div>
+            <div class="mt-2">
+              <label class="block text-xs font-bold text-gray-600">¿ESTÁ SU MADRE EN USA?</label>
+              <select name="madreEnUsa" class="w-full p-2 border rounded uppercase text-sm" onchange="toggleDiv('divMadreStatus', this.value === 'SI')">
+                <option value="NO">NO</option><option value="SI">SI</option>
+              </select>
+            </div>
+            <div id="divMadreStatus" class="hidden mt-2"><input type="text" name="madreStatus" placeholder="ESTATUS MIGRATORIO" class="w-full p-2 border rounded uppercase"></div>
+          </div>
+
+          <div class="mb-4">
+            <label class="block text-xs font-bold text-gray-600 mb-1"> ¿TIENE FAMILIARES DIRECTOS EN USA (HERMANOS/HIJOS)?</label>
+            <div class="flex gap-4 mb-2">
+               <label><input type="radio" name="tieneFamDirectos" value="SI" onclick="document.getElementById('famDirectosDiv').classList.remove('hidden')"> SÍ</label>
+               <label><input type="radio" name="tieneFamDirectos" value="NO" onclick="document.getElementById('famDirectosDiv').classList.add('hidden')" checked> NO</label>
+            </div>
+            <div id="famDirectosDiv" class="hidden p-4 bg-gray-50 border rounded">
+              <div id="famDirectosContainer"></div>
+              <button type="button" onclick="addRelativeRow()" class="mt-2 text-xs bg-green-600 text-white px-3 py-1 rounded">+ AGREGAR FAMILIAR</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-4">
+          <button type="button" onclick="goToStep(5)" class="w-1/3 bg-gray-500 text-white font-bold py-4 rounded shadow hover:bg-gray-600 uppercase">< Atrás</button>
+          <button type="button" onclick="goToStep(7)" class="w-2/3 bg-blue-700 text-white font-bold py-4 rounded shadow hover:bg-blue-800 uppercase">Siguiente Sección ></button>
+        </div>
+      </div>
+
+      <div id="step7" class="hidden-step fade-in">
+        <div class="mb-8">
+          <h3 class="text-sm font-bold text-white bg-blue-900 p-2 mb-4 uppercase rounded shadow">Información del Cónyuge</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+             <div><label class="block text-xs font-bold text-gray-600 mb-1">APELLIDOS</label><input type="text" name="espApellidos" class="w-full p-2 border rounded uppercase"></div>
+             <div><label class="block text-xs font-bold text-gray-600 mb-1">NOMBRES</label><input type="text" name="espNombre" class="w-full p-2 border rounded uppercase"></div>
+             <div><label class="block text-xs font-bold text-gray-600 mb-1">FECHA NAC.</label><input type="date" name="espNac" class="w-full p-2 border rounded uppercase"></div>
+             <div><label class="block text-xs font-bold text-gray-600 mb-1">NACIONALIDAD</label><input type="text" name="espNacionalidad" class="w-full p-2 border rounded uppercase"></div>
+             <div><label class="block text-xs font-bold text-gray-600 mb-1">CIUDAD NAC.</label><input type="text" name="espCiudadNac" class="w-full p-2 border rounded uppercase"></div>
+             <div><label class="block text-xs font-bold text-gray-600 mb-1">PAÍS NAC.</label><input type="text" name="espPaisNac" class="w-full p-2 border rounded uppercase"></div>
+             
+             <div class="col-span-2 border-t pt-4">
+               <label class="block text-xs font-bold text-gray-600 mb-1">¿VIVE EN EL MISMO DOMICILIO QUE USTED?</label>
+               <select name="espViveUsted" class="w-full p-2 border rounded uppercase text-sm" onchange="toggleDiv('divEspDir', this.value === 'NO')">
+                 <option value="SI">SÍ</option><option value="NO">NO</option>
+               </select>
+               <div id="divEspDir" class="hidden mt-2"><textarea name="espDireccion" placeholder="CALLE, CIUDAD, ESTADO, CP, PAIS" class="w-full p-2 border rounded uppercase"></textarea></div>
+             </div>
+             
+             <div><label class="block text-xs font-bold text-gray-600 mb-1">FECHA MATRIMONIO</label><input type="date" name="fechaMatrimonio" class="w-full p-2 border rounded uppercase"></div>
+             <div><label class="block text-xs font-bold text-gray-600 mb-1">FECHA DIVORCIO (SI APLICA)</label><input type="date" name="fechaDivorcio" class="w-full p-2 border rounded uppercase"></div>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <button type="button" onclick="goToStep(6)" class="w-1/3 bg-gray-500 text-white font-bold py-4 rounded shadow hover:bg-gray-600 uppercase">< Atrás</button>
+          <button type="button" onclick="goToStep(8)" class="w-2/3 bg-blue-700 text-white font-bold py-4 rounded shadow hover:bg-blue-800 uppercase">Siguiente Sección ></button>
+        </div>
+      </div>
+
+      <div id="step8" class="hidden-step fade-in">
+        <div class="mb-8">
+          <h3 class="text-sm font-bold text-white bg-blue-900 p-2 mb-4 uppercase rounded shadow">Trabajo Actual / Escuela</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+             <div class="col-span-2"><label class="block text-xs font-bold text-gray-600 mb-1">NOMBRE EMPLEADOR / ESCUELA</label><input type="text" name="empNombre" class="w-full p-2 border rounded uppercase"></div>
+             <div class="col-span-2"><label class="block text-xs font-bold text-gray-600 mb-1">DIRECCIÓN</label><input type="text" name="empDir" class="w-full p-2 border rounded uppercase"></div>
+             <div><label class="block text-xs font-bold text-gray-600 mb-1">CIUDAD</label><input type="text" name="empCiudad" class="w-full p-2 border rounded uppercase"></div>
+             <div><label class="block text-xs font-bold text-gray-600 mb-1">ESTADO</label><input type="text" name="empEstado" class="w-full p-2 border rounded uppercase"></div>
+             <div><label class="block text-xs font-bold text-gray-600 mb-1">PAÍS</label><input type="text" name="empPais" class="w-full p-2 border rounded uppercase"></div>
+             <div><label class="block text-xs font-bold text-gray-600 mb-1">ZIP CODE</label><input type="text" name="empZip" class="w-full p-2 border rounded uppercase"></div>
+             <div><label class="block text-xs font-bold text-gray-600 mb-1">TELÉFONO</label><input type="text" name="empTel" class="w-full p-2 border rounded uppercase"></div>
+             <div><label class="block text-xs font-bold text-gray-600 mb-1">EMAIL</label><input type="email" name="empEmail" class="w-full p-2 border rounded uppercase"></div>
+             
+             <div><label class="block text-xs font-bold text-gray-600 mb-1">PUESTO</label><input type="text" name="empPuesto" class="w-full p-2 border rounded uppercase"></div>
+             <div><label class="block text-xs font-bold text-gray-600 mb-1">SUELDO MENSUAL</label><input type="text" name="empSalario" class="w-full p-2 border rounded uppercase"></div>
+             <div class="col-span-2"><label class="block text-xs font-bold text-gray-600 mb-1">DEBERES LABORALES</label><textarea name="empDeberes" class="w-full p-2 border rounded uppercase"></textarea></div>
+             
+             <div class="col-span-2 bg-yellow-50 p-2 border border-yellow-200">
+               <label class="block text-xs font-bold text-gray-600 mb-1">SI ES ESTUDIANTE: ¿QUÉ ESTUDIA Y AÑO?</label>
+               <input type="text" name="estudianteInfo" class="w-full p-2 border rounded uppercase">
+             </div>
+             <div><label class="block text-xs font-bold text-gray-600 mb-1">FECHA INGRESO</label><input type="date" name="empFechaIngreso" class="w-full p-2 border rounded uppercase"></div>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <button type="button" onclick="goToStep(7)" class="w-1/3 bg-gray-500 text-white font-bold py-4 rounded shadow hover:bg-gray-600 uppercase">< Atrás</button>
+          <button type="button" onclick="goToStep(9)" class="w-2/3 bg-blue-700 text-white font-bold py-4 rounded shadow hover:bg-blue-800 uppercase">Siguiente Sección ></button>
+        </div>
+      </div>
+
+      <div id="step9" class="hidden-step fade-in">
+        <div class="mb-8">
+          <h3 class="text-sm font-bold text-white bg-blue-900 p-2 mb-4 uppercase rounded shadow">Historial Laboral y Educativo</h3>
+          
+          <div class="bg-blue-50 text-blue-900 p-2 mb-4 text-xs font-bold uppercase">
+             Llene solo si tiene menos de 5 años en su empleo actual
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border-b pb-6 mb-6">
+             <div class="col-span-2"><label class="block text-xs font-bold text-gray-600 mb-1">EMPLEADOR ANTERIOR</label><input type="text" name="antEmpNombre" class="w-full p-2 border rounded uppercase"></div>
+             <div class="col-span-2"><label class="block text-xs font-bold text-gray-600 mb-1">DIRECCIÓN</label><input type="text" name="antEmpDir" class="w-full p-2 border rounded uppercase"></div>
+             <div><label class="block text-xs font-bold text-gray-600 mb-1">CIUDAD</label><input type="text" name="antEmpCiudad" class="w-full p-2 border rounded uppercase"></div>
+             <div><label class="block text-xs font-bold text-gray-600 mb-1">ESTADO</label><input type="text" name="antEmpEstado" class="w-full p-2 border rounded uppercase"></div>
+             <div><label class="block text-xs font-bold text-gray-600 mb-1">PAÍS</label><input type="text" name="antEmpPais" class="w-full p-2 border rounded uppercase"></div>
+             <div><label class="block text-xs font-bold text-gray-600 mb-1">PUESTO</label><input type="text" name="antPuesto" class="w-full p-2 border rounded uppercase"></div>
+             <div><label class="block text-xs font-bold text-gray-600 mb-1">JEFE (APELLIDOS Y NOM)</label><input type="text" name="antJefeApe" class="w-full p-2 border rounded uppercase"></div>
+             <div class="flex gap-2">
+                <input type="date" name="antFechaIni" class="w-1/2 p-2 border rounded uppercase" title="INICIO">
+                <input type="date" name="antFechaFin" class="w-1/2 p-2 border rounded uppercase" title="FIN">
+             </div>
+          </div>
+
+          <h4 class="font-bold text-blue-800 text-sm mb-2 uppercase">Historial Educativo (Secundaria en Adelante)</h4>
+          <div id="educationDiv" class="p-4 bg-gray-50 border rounded">
+              <div id="educationContainer"></div>
+              <button type="button" onclick="addEducationRow()" class="mt-2 text-xs bg-green-600 text-white px-3 py-1 rounded">+ AGREGAR ESCUELA</button>
+          </div>
+
+        </div>
+        <div class="flex gap-4">
+          <button type="button" onclick="goToStep(8)" class="w-1/3 bg-gray-500 text-white font-bold py-4 rounded shadow hover:bg-gray-600 uppercase">< Atrás</button>
+          <button type="button" onclick="goToStep(10)" class="w-2/3 bg-blue-700 text-white font-bold py-4 rounded shadow hover:bg-blue-800 uppercase">Siguiente Sección ></button>
+        </div>
+      </div>
+
+      <div id="step10" class="hidden-step fade-in">
+        <div class="mb-8">
+           <h3 class="text-sm font-bold text-white bg-blue-900 p-2 mb-4 uppercase rounded shadow">Seguridad e Información Adicional</h3>
+           <p class="text-xs text-blue-600 font-bold mb-4 uppercase">* Preguntas en Azul para Varones (15-45 años)</p>
+
+           <div class="space-y-4">
+              <div class="border-b pb-2">
+                 <label class="block text-xs font-bold text-blue-800 mb-1"> ¿PERTENECE A CLAN O TRIBU?</label>
+                 <div class="flex gap-4"><label><input type="radio" name="tribu" value="SI" onchange="toggleDiv('divTribu', true)"> SÍ</label><label><input type="radio" name="tribu" value="NO" onchange="toggleDiv('divTribu', false)" checked> NO</label></div>
+                 <div id="divTribu" class="hidden mt-1"><input type="text" name="nombreTribu" placeholder="NOMBRE" class="w-full p-2 border rounded uppercase"></div>
+              </div>
+              <div class="border-b pb-2">
+                 <label class="block text-xs font-bold text-blue-800 mb-1">¿VIAJES AL EXTRANJERO (5 AÑOS)?</label>
+                 <div class="flex gap-4"><label><input type="radio" name="viajes5" value="SI" onchange="toggleDiv('divViajes', true)"> SÍ</label><label><input type="radio" name="viajes5" value="NO" onchange="toggleDiv('divViajes', false)" checked> NO</label></div>
+                 <div id="divViajes" class="hidden mt-1"><textarea name="paisesViajados" placeholder="LISTA PAISES" class="w-full p-2 border rounded uppercase"></textarea></div>
+              </div>
+              <div class="border-b pb-2">
+                 <label class="block text-xs font-bold text-blue-800 mb-1">¿PERTENECE A ORG. SOCIAL/PROFESIONAL?</label>
+                 <div class="flex gap-4"><label><input type="radio" name="orgSocial" value="SI" onchange="toggleDiv('divOrg', true)"> SÍ</label><label><input type="radio" name="orgSocial" value="NO" onchange="toggleDiv('divOrg', false)" checked> NO</label></div>
+                 <div id="divOrg" class="hidden mt-1"><input type="text" name="nombreOrg" placeholder="NOMBRE" class="w-full p-2 border rounded uppercase"></div>
+              </div>
+              <div class="border-b pb-2">
+                 <label class="block text-xs font-bold text-blue-800 mb-1">¿TIENE ENTRENAMIENTO EN ARMAS/EXPLOSIVOS?</label>
+                 <div class="flex gap-4"><label><input type="radio" name="armas" value="SI" onchange="toggleDiv('divArmas', true)"> SÍ</label><label><input type="radio" name="armas" value="NO" onchange="toggleDiv('divArmas', false)" checked> NO</label></div>
+                 <div id="divArmas" class="hidden mt-1"><textarea name="expArmas" placeholder="EXPLIQUE" class="w-full p-2 border rounded uppercase"></textarea></div>
+              </div>
+              <div class="border-b pb-2">
+                 <label class="block text-xs font-bold text-blue-800 mb-1">¿HA HECHO SERVICIO MILITAR?</label>
+                 <div class="flex gap-4"><label><input type="radio" name="militar" value="SI" onchange="toggleDiv('divMilitar', true)"> SÍ</label><label><input type="radio" name="militar" value="NO" onchange="toggleDiv('divMilitar', false)" checked> NO</label></div>
+                 <div id="divMilitar" class="hidden mt-1"><textarea name="detMilitar" placeholder="PAÍS, RAMA, PUESTO, FECHAS" class="w-full p-2 border rounded uppercase"></textarea></div>
+              </div>
+
+              <h4 class="font-bold text-red-800 text-sm mt-6 mb-2">SALUD Y SEGURIDAD</h4>
+              
+              <div class="bg-red-50 p-4 rounded space-y-4">
+                 <div><label class="font-bold text-xs text-red-900"> ¿TIENE ALGUNA ENFERMEDAD CONTAGIOSA?</label> <span class="mx-2"><label><input type="radio" name="enfermedad" value="SI" onchange="toggleDiv('dEnf',true)"> SÍ</label> <label><input type="radio" name="enfermedad" value="NO" onchange="toggleDiv('dEnf',false)" checked> NO</label></span>
+                 <div id="dEnf" class="hidden"><input type="text" name="expEnfermedad" placeholder="ESPECIFIQUE" class="w-full p-1 border rounded uppercase"></div></div>
+
+                 <div><label class="font-bold text-xs text-red-900">¿TIENE ALGÚN TRASTORNO MENTAL RIESGOSO?</label> <span class="mx-2"><label><input type="radio" name="trastorno" value="SI" onchange="toggleDiv('dTras',true)"> SÍ</label> <label><input type="radio" name="trastorno" value="NO" onchange="toggleDiv('dTras',false)" checked> NO</label></span>
+                 <div id="dTras" class="hidden"><input type="text" name="expTrastorno" placeholder="ESPECIFIQUE" class="w-full p-1 border rounded uppercase"></div></div>
+
+                 <div><label class="font-bold text-xs text-red-900">¿ES ADICTO A ALGUNA DROGA?</label> <span class="mx-2"><label><input type="radio" name="adicto" value="SI"> SÍ</label> <label><input type="radio" name="adicto" value="NO" checked> NO</label></span></div>
+
+                 <div><label class="font-bold text-xs text-red-900">¿TIENE ANTECEDENTES PENALES?</label> <span class="mx-2"><label><input type="radio" name="delito" value="SI" onchange="toggleDiv('dDel',true)"> SÍ</label> <label><input type="radio" name="delito" value="NO" onchange="toggleDiv('dDel',false)" checked> NO</label></span>
+                 <div id="dDel" class="hidden"><input type="text" name="expDelito" placeholder="ESPECIFIQUE" class="w-full p-1 border rounded uppercase"></div></div>
+
+                 <div><label class="font-bold text-xs text-red-900">¿ HA COMETIDO ALGÚN DELITO EN USA?</label> <span class="mx-2"><label><input type="radio" name="delitoUsa" value="SI" onchange="toggleDiv('dDelUsa',true)"> SÍ</label> <label><input type="radio" name="delitoUsa" value="NO" onchange="toggleDiv('dDelUsa',false)" checked> NO</label></span>
+                 <div id="dDelUsa" class="hidden"><input type="text" name="expDelitoUsa" placeholder="ESPECIFIQUE" class="w-full p-1 border rounded uppercase"></div></div>
+
+                 <div><label class="font-bold text-xs text-red-900">¿ESTUVO DE FORMA ILEGAL EN USA?</label> <span class="mx-2"><label><input type="radio" name="ilegal" value="SI" onchange="toggleDiv('dIlegal',true)"> SÍ</label> <label><input type="radio" name="ilegal" value="NO" onchange="toggleDiv('dIlegal',false)" checked> NO</label></span>
+                 <div id="dIlegal" class="hidden"><input type="text" name="expIlegal" placeholder="ESPECIFIQUE" class="w-full p-1 border rounded uppercase"></div></div>
+
+                 <div><label class="font-bold text-xs text-red-900">¿TRABAJÓ SIN PERMISO EN USA?</label> <span class="mx-2"><label><input type="radio" name="trabajoIlegal" value="SI" onchange="toggleDiv('dTrabIlegal',true)"> SÍ</label> <label><input type="radio" name="trabajoIlegal" value="NO" onchange="toggleDiv('dTrabIlegal',false)" checked> NO</label></span>
+                 <div id="dTrabIlegal" class="hidden"><input type="text" name="expTrabajoIlegal" placeholder="ESPECIFIQUE" class="w-full p-1 border rounded uppercase"></div></div>
+              </div>
+
+           </div>
+        </div>
+
+        <div class="flex gap-4 mt-6">
+          <button type="button" onclick="goToStep(9)" class="w-1/3 bg-gray-500 text-white font-bold py-4 rounded shadow hover:bg-gray-600 uppercase">< Atrás</button>
+          <button type="button" onclick="goToStep(11)" class="w-2/3 bg-blue-700 text-white font-bold py-4 rounded shadow hover:bg-blue-800 uppercase">Siguiente: Documentos ></button>
+        </div>
+      </div>
+
+      <div id="step11" class="hidden-step fade-in">
+         <div class="mb-8">
+            <h3 class="text-sm font-bold text-white bg-blue-900 p-2 mb-4 uppercase rounded shadow">Subir Documentos</h3>
+            <p class="text-sm text-gray-600 mb-4">Por favor suba una foto clara o archivo PDF de los siguientes documentos. Puede usar la cámara de su dispositivo.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+               <div>
+                 <label class="block text-blue-900 font-bold mb-2">FOTO DE SU INE (FRENTE)</label>
+                 <div class="file-upload-wrapper">
+                    <input type="file" id="fileIne" accept="image/*,application/pdf" capture="environment" class="w-full">
+                    <p class="text-xs text-gray-500 mt-2">Toque para tomar foto o subir archivo</p>
+                 </div>
+               </div>
+
+               <div>
+                 <label class="block text-blue-900 font-bold mb-2">FOTO DE SU PASAPORTE (DATOS)</label>
+                 <div class="file-upload-wrapper">
+                    <input type="file" id="filePasaporte" accept="image/*,application/pdf" capture="environment" class="w-full">
+                    <p class="text-xs text-gray-500 mt-2">Toque para tomar foto o subir archivo</p>
+                 </div>
+               </div>
+            </div>
+<div class="col-span-2 mt-4">
+  <label class="block text-xs font-bold text-gray-600 mb-2">FOTO ACTA DE NACIMIENTO</label>
+  <div class="file-upload-wrapper relative" onclick="document.getElementById('fileActa').click()">
+    <p class="text-blue-900 font-bold" id="labelActa">Toque para tomar foto o subir archivo)</p>
+    <p class="text-xs text-gray-500">FORMATO: JPG/PNG/PDF</p>
+    <input type="file" id="fileActa" name="fileActa" accept="image/*,application/pdf" class="hidden" onchange="updateFileName(this, 'labelActa')">
+  </div>
+</div>
+
+            <div class="bg-red-50 border-l-8 border-red-600 p-6 rounded mb-8 shadow-inner">
+               <h4 class="text-red-700 font-black text-xl mb-2 flex items-center">
+                 <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                 IMPORTANTE
+               </h4>
+               <p class="text-justify text-sm font-bold text-gray-800 leading-relaxed uppercase">
+                 POR FAVOR TENGA EN CUENTA QUE PROPORCIONAR INFORMACIÓN FALSA, MENTIR U OMITIR CUALQUIER INFORMACIÓN IMPORTANTE RELACIONADA CON ESTA SOLICITUD, PUEDE SER CONSIDERADA POR LAS AUTORIDADES AMERICANAS COMO INTENTO DE FRAUDE O DE ENGAÑAR A UN OFICIAL FEDERAL DE LOS ESTADOS UNIDOS Y ESTO PUEDE TENER COMO CONSECUENCIA QUE NO LE OTORGUEN SU VISA, O QUE PIERDA EL DERECHO PERMANENTEMENTE DE QUE SE LA OTORGUEN.
+               </p>
+               <div class="mt-4 flex items-center">
+                 <input type="checkbox" id="checkAgreement" class="w-5 h-5 text-red-600 rounded focus:ring-red-500" required>
+                 <label for="checkAgreement" class="ml-2 text-sm font-bold text-red-900">HE LEÍDO Y ENTENDIDO ESTA ADVERTENCIA.</label>
+               </div>
+            </div>
+
+            <div class="flex gap-4">
+               <button type="button" onclick="goToStep(10)" class="w-1/3 bg-gray-500 text-white font-bold py-4 rounded shadow hover:bg-gray-600 uppercase">< Atrás</button>
+               <button id="btnSubmit" type="submit" class="w-2/3 bg-green-700 text-white font-bold py-4 rounded shadow hover:bg-green-800 uppercase text-xl transition transform hover:scale-105">FINALIZAR Y ENVIAR SOLICITUD</button>
+            </div>
+            
+            <div id="statusMessage" class="hidden mt-4"></div>
+         </div>
+      </div>
+
+    </form>
+  </div>
+
+  <script>
+    let currentStep = 1;
+
+    // Navegación
+    function goToStep(step) {
+      for (let i = 1; i <= 11; i++) {
+        const el = document.getElementById('step' + i);
+        if(el) el.classList.add('hidden-step');
+      }
+      document.getElementById('step' + step).classList.remove('hidden-step');
+      currentStep = step;
+      window.scrollTo(0, 0);
+    }
+
+    // === UTILIDADES VISUALES ===
+    function limitLength(element, max) {
+      if (element.value.length > max) element.value = element.value.slice(0, max);
+    }
+    function toggleSocials(show) {
+      const block = document.getElementById('socialMediaBlock');
+      if (show) block.classList.remove('hidden'); else block.classList.add('hidden');
+    }
+    function toggleLostPassport(show) {
+      const block = document.getElementById('lostPassportBlock');
+      if (show) block.classList.remove('hidden'); else block.classList.add('hidden');
+    }
+    function togglePayer(val) {
+      const div = document.getElementById('payerDetails');
+      if (val === 'OTRA PERSONA' || val === 'COMPAÑIA') div.classList.remove('hidden'); else div.classList.add('hidden');
+    }
+    function toggleUsaHistory(show) {
+      const div = document.getElementById('usaHistoryDiv');
+      if(show) div.classList.remove('hidden'); else div.classList.add('hidden');
+    }
+    function toggleVisaHistory(show) {
+      const div = document.getElementById('visaHistoryDiv');
+      if(show) div.classList.remove('hidden'); else div.classList.add('hidden');
+    }
+    function toggleDiv(id, show) {
+      const el = document.getElementById(id);
+      if(show) el.classList.remove('hidden'); else el.classList.add('hidden');
+    }
+
+    // === LISTAS DINÁMICAS ===
+    function addCompanion() {
+      const container = document.getElementById('companionsContainer');
+      const html = `
+        <div class="companion-row grid grid-cols-1 md:grid-cols-3 gap-2 mb-2 border-b pb-2">
+           <input type="text" class="comp-lastname w-full p-2 border rounded uppercase" placeholder="APELLIDOS">
+           <input type="text" class="comp-name w-full p-2 border rounded uppercase" placeholder="NOMBRES">
+           <input type="text" class="comp-rel w-full p-2 border rounded uppercase" placeholder="RELACIÓN">
+           <button type="button" onclick="this.parentElement.remove()" class="text-red-500 text-xs underline">Eliminar</button>
+        </div>`;
+      container.insertAdjacentHTML('beforeend', html);
+    }
+
+    function addRelativeRow() {
+      const container = document.getElementById('famDirectosContainer');
+      const html = `
+        <div class="relative-row bg-blue-50 p-2 mb-2 rounded border border-blue-100">
+           <div class="grid grid-cols-2 gap-2 mb-1">
+             <input type="text" class="rel-ape w-full p-1 border rounded uppercase text-sm" placeholder="APELLIDOS">
+             <input type="text" class="rel-nom w-full p-1 border rounded uppercase text-sm" placeholder="NOMBRE">
+           </div>
+           <div class="grid grid-cols-2 gap-2">
+             <input type="text" class="rel-rel w-full p-1 border rounded uppercase text-sm" placeholder="RELACIÓN">
+             <select class="rel-stat w-full p-1 border rounded uppercase text-sm">
+                <option value="">STATUS...</option>
+                <option value="CIUDADANO">CIUDADANO</option>
+                <option value="RESIDENTE">RESIDENTE</option>
+                <option value="NO SABE">NO SABE</option>
+             </select>
+           </div>
+           <button type="button" onclick="this.parentElement.remove()" class="text-red-500 text-xs mt-1 underline">Eliminar</button>
+        </div>`;
+      container.insertAdjacentHTML('beforeend', html);
+    }
+
+    function addEducationRow() {
+      const container = document.getElementById('educationContainer');
+      const html = `
+        <div class="edu-row bg-gray-50 p-2 mb-2 rounded border border-gray-200 relative">
+           <input type="text" class="edu-nom w-full p-1 border rounded uppercase text-sm mb-1" placeholder="NOMBRE ESCUELA">
+           <div class="grid grid-cols-3 gap-1 mb-1">
+              <input type="text" class="edu-ciu w-full p-1 border rounded uppercase text-xs" placeholder="CIUDAD">
+              <input type="text" class="edu-edo w-full p-1 border rounded uppercase text-xs" placeholder="EDO">
+              <input type="text" class="edu-pais w-full p-1 border rounded uppercase text-xs" placeholder="PAIS">
+           </div>
+           <input type="text" class="edu-curso w-full p-1 border rounded uppercase text-sm mb-1" placeholder="CURSO/CARRERA">
+           <div class="flex gap-2">
+              <input type="date" class="edu-ini w-1/2 p-1 border rounded text-xs">
+              <input type="date" class="edu-fin w-1/2 p-1 border rounded text-xs">
+           </div>
+           <button type="button" onclick="this.parentElement.remove()" class="text-red-500 text-xs underline mt-1">Eliminar</button>
+        </div>`;
+      container.insertAdjacentHTML('beforeend', html);
+    }
+
+    // Utilidad: Leer archivo como Base64 (Promesa)
+    function readFile(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // === LÓGICA DE ENVÍO ===
+    async function submitForm(e) {
+      e.preventDefault();
+      
+      const check = document.getElementById('checkAgreement');
+      if(!check.checked) {
+        alert("DEBE ACEPTAR LA ADVERTENCIA LEGAL PARA CONTINUAR.");
+        return;
+      }
+
+      const btn = document.getElementById('btnSubmit');
+      const status = document.getElementById('statusMessage');
+
+      btn.disabled = true;
+      btn.innerText = "SUBIENDO FOTOS Y DATOS... (ESPERE)";
+      status.classList.remove('hidden');
+      status.className = "mt-4 p-4 rounded text-center font-bold bg-yellow-100 text-yellow-800 border border-yellow-300";
+      status.innerText = "Procesando imágenes, esto puede tardar unos segundos...";
+
+      const form = document.getElementById('visaForm');
+      
+      // 1. Recolectar Datos Texto
+      const rawData = new FormData(form);
+      const formData = {};
+      rawData.forEach((value, key) => {
+        if (typeof value === 'string') {
+           formData[key] = value.toUpperCase();
+        }
+      });
+
+      // 2. Procesar Listas Dinámicas
+      
+      // Acompañantes
+      let compList = "";
+      document.querySelectorAll('.companion-row').forEach((row, i) => {
+         const l = row.querySelector('.comp-lastname').value.toUpperCase();
+         const n = row.querySelector('.comp-name').value.toUpperCase();
+         const r = row.querySelector('.comp-rel').value.toUpperCase();
+         if(l || n) compList += `[${i+1}: ${l} ${n} (${r})] `;
+      });
+      formData.listaAcompanantes = compList || "NINGUNO";
+
+      // Familiares Directos
+      let famList = "";
+      document.querySelectorAll('.relative-row').forEach((row, i) => {
+         const a = row.querySelector('.rel-ape').value.toUpperCase();
+         const n = row.querySelector('.rel-nom').value.toUpperCase();
+         const r = row.querySelector('.rel-rel').value.toUpperCase();
+         const s = row.querySelector('.rel-stat').value.toUpperCase();
+         if(a || n) famList += `[${i+1}: ${a} ${n} (${r}) - ${s}] `;
+      });
+      formData.listaFamiliares = famList || "NINGUNO";
+
+      // Educación
+      let eduList = "";
+      document.querySelectorAll('.edu-row').forEach((row, i) => {
+         const n = row.querySelector('.edu-nom').value.toUpperCase();
+         const c = row.querySelector('.edu-curso').value.toUpperCase();
+         const ini = row.querySelector('.edu-ini').value;
+         const fin = row.querySelector('.edu-fin').value;
+         if(n) eduList += `[${i+1}: ${n} - ${c} (${ini} a ${fin})] `;
+      });
+      formData.listaEducacion = eduList || "NINGUNA";
+
+      // 3. Procesar Archivos (INE y PASAPORTE)
+      try {
+        const ineInput = document.getElementById('fileIne');
+        const passInput = document.getElementById('filePasaporte');
+
+        if(ineInput.files.length > 0) {
+           formData.fileIneData = await readFile(ineInput.files[0]);
+        }
+        if(passInput.files.length > 0) {
+           formData.filePassData = await readFile(passInput.files[0]);
+        }
+
+        // 4. Enviar a GAS
+        google.script.run
+          .withSuccessHandler(response => {
+            btn.disabled = false; btn.innerText = "FINALIZAR Y ENVIAR";
+            status.innerText = response.message;
+            status.className = "mt-4 p-4 rounded text-center font-bold border " + 
+                               (response.status === 'success' ? "bg-green-100 text-green-800 border-green-300" : "bg-red-100 text-red-800 border-red-300");
+            
+            if(response.status === 'success') { 
+              form.reset();
+              if(document.getElementById('companionsContainer')) document.getElementById('companionsContainer').innerHTML = '';
+              if(document.getElementById('famDirectosContainer')) document.getElementById('famDirectosContainer').innerHTML = '';
+              if(document.getElementById('educationContainer')) document.getElementById('educationContainer').innerHTML = '';
+              goToStep(1); 
+              alert("¡Solicitud enviada correctamente!");
+            }
+          })
+          .withFailureHandler(err => {
+            btn.disabled = false; btn.innerText = "REINTENTAR";
+            status.innerText = "Error: " + err;
+            status.className = "mt-4 p-4 rounded text-center font-bold bg-red-100 text-red-800 border-red-300";
+          })
+          .processForm(formData);
+
+      } catch (error) {
+         console.error(error);
+         alert("Error leyendo archivos: " + error);
+         btn.disabled = false;
+         btn.innerText = "FINALIZAR Y ENVIAR";
+      }
+      // --- PEGAR ESTO DENTRO DE TU ETIQUETA <script> AL FINAL DEL HTML ---
+
+  // Función auxiliar para actualizar nombre de archivo (Respetando tu estilo visual)
+  function updateFileName(input, labelId) {
+    if (input.files && input.files.length > 0) {
+      var label = document.getElementById(labelId);
+      label.innerText = "ARCHIVO LISTO: " + input.files[0].name;
+      label.classList.add("text-green-600"); // Feedback visual simple
+    }
+  }
+
+  // Función para leer archivos como Base64 (Promesa)
+  function readFileAsBase64(file) {
+    return new Promise((resolve, reject) => {
+      if (!file) {
+        resolve(null);
+        return;
+      }
+      var reader = new FileReader();
+      reader.onload = function(e) { resolve(e.target.result); };
+      reader.onerror = function(e) { reject(e); };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // --- FUNCIÓN DE ENVÍO ACTUALIZADA ---
+  function submitForm(e) {
+    e.preventDefault();
+    
+    // Referencia a tu botón de envío (ajusta el ID si tu botón tiene otro)
+    var btn = document.querySelector('button[type="submit"]'); 
+    if(btn) { 
+        btn.disabled = true; 
+        btn.innerText = "ENVIANDO DATOS..."; 
+    }
+
+    var form = document.getElementById('visaForm');
+    var rawData = new FormData(form);
+    var formData = {};
+
+    // 1. Recopilar todos los campos de texto
+    for (var pair of rawData.entries()) {
+      formData[pair[0]] = pair[1];
+    }
+
+    // 2. Obtener los archivos de los inputs
+    var fileIne = document.getElementById('fileIne') ? document.getElementById('fileIne').files[0] : null;
+    var filePass = document.getElementById('filePass') ? document.getElementById('filePass').files[0] : null;
+    // EL NUEVO ARCHIVO:
+    var fileActa = document.getElementById('fileActa') ? document.getElementById('fileActa').files[0] : null;
+
+    // 3. Leer los 3 archivos simultáneamente
+    Promise.all([
+      readFileAsBase64(fileIne),
+      readFileAsBase64(filePass),
+      readFileAsBase64(fileActa)
+    ])
+    .then(function(results) {
+      formData.fileIneData = results[0];  // INE
+      formData.filePassData = results[1]; // Pasaporte
+      formData.fileActaData = results[2]; // Acta (Nuevo)
+
+      // 4. Enviar a Google Apps Script
+      google.script.run
+        .withSuccessHandler(function(response) {
+            if(btn) { btn.disabled = false; btn.innerText = "FINALIZAR Y ENVIAR"; }
+            alert("¡SOLICITUD ENVIADA CORRECTAMENTE!\n\n" + response.message);
+            form.reset();
+            // Restablecer etiquetas de archivos
+            if(document.getElementById('labelIne')) document.getElementById('labelIne').innerText = "CLIC PARA SUBIR INE";
+            if(document.getElementById('labelPass')) document.getElementById('labelPass').innerText = "CLIC PARA SUBIR PASAPORTE";
+            if(document.getElementById('labelActa')) document.getElementById('labelActa').innerText = "CLIC PARA SUBIR ACTA";
+            
+            // Si tienes una función para volver al paso 1, úsala aquí:
+            if(typeof goToStep === 'function') goToStep(1);
+        })
+        .withFailureHandler(function(error) {
+            if(btn) { btn.disabled = false; btn.innerText = "REINTENTAR"; }
+            alert("ERROR: " + error.message);
+        })
+        .processForm(formData);
+    })
+    .catch(function(err) {
+       console.error(err);
+       alert("Error al leer los archivos: " + err);
+       if(btn) btn.disabled = false;
+    });
+  }
+    }
+  </script>
+</body>
+</html>
